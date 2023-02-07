@@ -1,16 +1,33 @@
 import React, {Component} from 'react';
 import {View, Button, Text, TextInput, StyleSheet, ImageBackground} from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
+
+
+const backgroundColors = {
+    black: { backgroundColor: '#090c08' },
+    purple: { backgroundColor: '#474056' },
+    grey: { backgroundColor: '#8A95A5' },
+    green: { backgroundColor: '#B9C6AE' }
+}
+
+
 
 
 
 export default class Start extends Component{
     constructor(props){
         super(props);
-        this.state={name: ''};
+        this.state={name: '', color: ''};
     }
+
+    
 
    
     render(){
+
+        const { black, purple, grey, green } = backgroundColors;
+
         return(
             <View style={styles.container}>
 
@@ -34,10 +51,27 @@ export default class Start extends Component{
                     
                             {/* To make the colors in circle, DO NOT USE <TEXT> -- INSTEAD USE <VIEW> */}
                             <View style={styles.backgroundColorDirection}>
-                                <View style={styles.color1}></View>
-                                <View style={styles.color2}></View>
-                                <View style={styles.color3}></View>
-                                <View style={styles.color4}></View>
+
+                                <TouchableOpacity style={styles.color1}
+                                onPress={() => this.setState({color: black.backgroundColor})}
+                                ></TouchableOpacity>
+
+                                <TouchableOpacity style={styles.color2}
+                                onPress={() => this.setState({color: purple.backgroundColor})}
+                                ></TouchableOpacity>
+
+                                <TouchableOpacity style={styles.color3}
+                                onPress={() => this.setState({color: grey.backgroundColor})}
+                                ></TouchableOpacity>
+
+                                <TouchableOpacity style={styles.color4}
+                                onPress={() => this.setState({color: green.backgroundColor})}
+                                ></TouchableOpacity>
+
+                                {/* <View style={styles.color1}></View> */}
+                                {/* <View style={styles.color2}></View> */}
+                                {/* <View style={styles.color3}></View> */}
+                                {/* <View style={styles.color4}></View> */}
                             </View>
                         </View>
 
@@ -46,7 +80,7 @@ export default class Start extends Component{
                             <Button 
                             title= ''
                             onPress={() => {
-                                this.props.navigation.navigate('Chat', {name: this.state.name})
+                                this.props.navigation.navigate('Chat', {name: this.state.name, color: this.state.color})
                             }}
                             />
                             <Text style={styles.chatbarText}>Start Chatting</Text>
