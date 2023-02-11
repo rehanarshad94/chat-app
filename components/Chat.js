@@ -4,9 +4,14 @@ import { View, Button, Text, StyleSheet, TextInput, Platform, KeyboardAvoidingVi
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 
 
+// import { initializeApp } from "firebase/app";
 
-const firebase = require('firebase');
-require('firebase/firestore');
+// const firebase = require('firebase');
+// require('firebase/firestore');
+
+
+import firebase from 'firebase';
+import firestore from 'firebase';
 
 
 export default class Chat extends Component{
@@ -14,11 +19,13 @@ export default class Chat extends Component{
         super();
         this.state={
             messages: [],
+            uid: 0,
+            loggedInText: 'Please Wait',
         }
 
 
 
-         // Initialize Firebase
+        //  Initialize Firebase
          if (!firebase.apps.length) {
           firebase.initializeApp(firebaseConfig);
          }
@@ -32,6 +39,21 @@ export default class Chat extends Component{
             messagingSenderId: "784870559237",
             appId: "1:784870559237:web:89b7a0ae54698946f6d66c"
           }
+
+          // const firebaseConfig = {
+          //   apiKey: "AIzaSyCgtkTTLQY3VXXrZU2wj0CABdC_Jac5dYA",
+          //   authDomain: "chatapp-ac337.firebaseapp.com",
+          //   projectId: "chatapp-ac337",
+          //   storageBucket: "chatapp-ac337.appspot.com",
+          //   messagingSenderId: "784870559237",
+          //   appId: "1:784870559237:web:89b7a0ae54698946f6d66c"
+          // };
+
+          // Initialize Firebase
+          // const app = initializeApp(firebaseConfig);
+
+
+          // this.referenceChatUser = '';
 
 
          // reference to messages in database
@@ -47,31 +69,32 @@ export default class Chat extends Component{
         
 
         // this is a reference to the message collection in database
-        this.referenceChatMessage = firebase
+        this.referenceChatMessages = firebase
         .firestore()
         .collection('messages');
 
 
            // listen to authentication events
-          this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+          this.authUnsubscribe = firebase.auth().onAuthStateChanged(async(user) => {
             if (!user) {
-              firebase.auth().signInAnonymously();
+              await firebase.auth().signInAnonymously();
             }
+             //update user state with currently active user data
             this.setState({
               uid: user.uid,
-              messages: [],
+              loggedInText: 'Hello there',
             });
             this.unsubscribe = this.referenceChatMessages
               .orderBy("createdAt", "desc")
               .onSnapshot(this.onCollectionUpdate);
           });
 
-          // create a reference to the active user's documents (shopping lists)
-          this.referenceChatUser = firebase
-          .firestore()
-          .collection('messages').where("uid", "==", this.state.uid);
+          // create a reference to the active user's documents (messages)
+          // this.referenceChatUser = firebase
+          // .firestore()
+          // .collection('messages').where("uid", "==", this.state.uid);
           // listen for collection changes for current user 
-          this.unsubscribeListUser = this.referenceShoppinglistUser.onSnapshot(this.onCollectionUpdate);
+          // this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate);
 }
 
         
@@ -108,6 +131,29 @@ export default class Chat extends Component{
           //     system: true,
           //    },
           // ]
+
+          componentWillUnmount() {
+            // stop listening to authentication
+            // this.authUnsubscribe();
+            this.authUnsubscribe();
+            // stop listening for changes
+            // this.unsubscribe();
+
+          }
+
+
+          addMessage(){
+            this.referenceChatMessages.add({
+              _id: '2',
+              createdAt: new Date(),
+              text: 'hii',
+              uid: 'two',
+              user: {
+                _id: 'two',
+                avatar: 'https://placeimg.com/140/140/any',
+              },
+            })
+          }
       
 
 
@@ -123,19 +169,13 @@ export default class Chat extends Component{
             createdAt: data.createdAt.toDate(),
             user: data.user,
           });
+          this.setState({
+            messages,
+          })
         });
       }
 
       
-
-
-      addMessage(){
-        this.referenceChatMessage.add({
-          text: 'hii',
-          createdAt: new Date(),
-          user: 'User Two'
-        })
-      }
 
 
       onSend(messages = []) {
@@ -155,20 +195,13 @@ export default class Chat extends Component{
             {...props}
             wrapperStyle={{
               right: {
-                backgroundColor: '#000'
+                backgroundColor: '#000',
               }
             }}
           />
         )
       }
 
-
-      componentWillUnmount() {
-        // stop listening to authentication
-        this.authUnsubscribe();
-        // stop listening for changes
-        this.unsubscribe();
-      }
       
     
 
@@ -187,12 +220,15 @@ export default class Chat extends Component{
           
           <View style={{flex: 1, backgroundColor: color}}>
 
+          <Text>{this.state.loggedInText}</Text>    
+
           <GiftedChat
           renderBubble={this.renderBubble.bind(this)}
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
           user={{
-          _id: 1,
+            _id: this.state.uid,
+            avatar: 'https://placeimg.com/140/140/any',
           }}
           />
 
