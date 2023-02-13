@@ -1,17 +1,13 @@
-import { firestore } from 'firebase';
 import React, { Component } from 'react';
 import { View, Button, Text, StyleSheet, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 
 
-// import { initializeApp } from "firebase/app";
-
-// const firebase = require('firebase');
-// require('firebase/firestore');
 
 
-import firebase from 'firebase';
-import firestore from 'firebase';
+const firebase = require('firebase');
+require('firebase/firestore');
+
 
 
 export default class Chat extends Component{
@@ -25,10 +21,7 @@ export default class Chat extends Component{
 
 
 
-        //  Initialize Firebase
-         if (!firebase.apps.length) {
-          firebase.initializeApp(firebaseConfig);
-         }
+       
 
 
           const firebaseConfig = {
@@ -39,6 +32,11 @@ export default class Chat extends Component{
             messagingSenderId: "784870559237",
             appId: "1:784870559237:web:89b7a0ae54698946f6d66c"
           }
+
+           //  Initialize Firebase
+         if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+         }
 
           // const firebaseConfig = {
           //   apiKey: "AIzaSyCgtkTTLQY3VXXrZU2wj0CABdC_Jac5dYA",
@@ -137,7 +135,7 @@ export default class Chat extends Component{
             // this.authUnsubscribe();
             this.authUnsubscribe();
             // stop listening for changes
-            // this.unsubscribe();
+            this.unsubscribe();
 
           }
 
@@ -146,7 +144,7 @@ export default class Chat extends Component{
             this.referenceChatMessages.add({
               _id: '2',
               createdAt: new Date(),
-              text: 'hii',
+              text: 'hii, this message is sent from the send message button on bottom',
               uid: 'two',
               user: {
                 _id: 'two',
@@ -227,8 +225,7 @@ export default class Chat extends Component{
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
           user={{
-            _id: this.state.uid,
-            avatar: 'https://placeimg.com/140/140/any',
+            _id: 1,
           }}
           />
 
