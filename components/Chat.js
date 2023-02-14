@@ -140,18 +140,33 @@ export default class Chat extends Component{
           }
 
 
-          addMessage(){
-            this.referenceChatMessages.add({
-              _id: '2',
-              createdAt: new Date(),
-              text: 'hii, this message is sent from the send message button on bottom',
-              uid: 'two',
-              user: {
-                _id: 'two',
-                avatar: 'https://placeimg.com/140/140/any',
-              },
-            })
-          }
+          // addMessage(){
+          //   this.referenceChatMessages.add({
+          //     _id: '2',
+          //     createdAt: new Date(),
+          //     text: 'hii, this message is sent from the send message button on bottom',
+          //     uid: 'two',
+          //     user: {
+          //       _id: 'two',
+          //       avatar: 'https://placeimg.com/140/140/any',
+          //     },
+          //   })
+          // }
+
+          addMessage(messages) {
+          const message = messages[0]
+
+          this.referenceChatMessages.add({
+          _id: message._id,
+          createdAt: new Date(),
+          text: message.text,
+          uid: message._id,
+          user: {
+            _id: message.user._id,
+            avatar: 'https://placeimg.com/140/140/any',
+          },
+         })
+        }
       
 
 
@@ -180,9 +195,10 @@ export default class Chat extends Component{
         this.setState(previousState => ({
           messages: GiftedChat.append(previousState.messages, messages),
         })),
-        () => {
-          this.addMessage(messages);
-        }
+        // () => {
+        //   this.addMessage(messages);
+        // }
+        this.addMessage(messages);
 
       }
 
