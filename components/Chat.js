@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { View, Button, Text, StyleSheet, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
-import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from '@react-native-community/netinfo';
 
 
 
@@ -61,9 +63,42 @@ export default class Chat extends Component{
 
     }
 
+    async getMessages() {
+      let messages = '';
+      try {
+        messages = await AsyncStorage.getItem('messages') || [];
+        this.setState({
+          messages: JSON.parse(messages)
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    async saveMessages() {
+      try {
+        await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
+    async deleteMessages() {
+      try {
+        await AsyncStorage.removeItem('messages');
+        this.setState({
+          messages: []
+        })
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
     
 
     componentDidMount() {
+
+      this.getMessages();
         
 
         // this is a reference to the message collection in database
@@ -85,6 +120,15 @@ export default class Chat extends Component{
             this.unsubscribe = this.referenceChatMessages
               .orderBy("createdAt", "desc")
               .onSnapshot(this.onCollectionUpdate);
+          });
+
+
+          NetInfo.fetch().then(connection => {
+            if (connection.isConnected) {
+              console.log('online');
+            } else {
+              console.log('offline');
+            }
           });
 
           // create a reference to the active user's documents (messages)
@@ -198,7 +242,10 @@ export default class Chat extends Component{
         // () => {
         //   this.addMessage(messages);
         // }
+        () => {
         this.addMessage(messages);
+        this.saveMessages();
+        }
 
       }
 
@@ -214,6 +261,17 @@ export default class Chat extends Component{
             }}
           />
         )
+      }
+
+      renderInputToolbar(props) {
+        if (this.state.isConnected == false) {
+        } else {
+          return(
+            <InputToolbar
+            {...props}
+            />
+          );
+        }
       }
 
       
@@ -245,14 +303,14 @@ export default class Chat extends Component{
           }}
           />
 
-         <View>
+         {/* <View>
           <Button 
           title='Send Message'
           onPress={() => {
             this.addMessage();
           }}
-          />
-         </View>
+          /> */}
+         {/* </View> */}
 
 
           
