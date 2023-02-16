@@ -19,6 +19,7 @@ export default class Chat extends Component{
             messages: [],
             uid: 0,
             loggedInText: 'Please Wait',
+            isConnected: true,
         }
 
 
@@ -126,10 +127,32 @@ export default class Chat extends Component{
           NetInfo.fetch().then(connection => {
             if (connection.isConnected) {
               console.log('online');
+              this.setState({
+                ...this.state,
+                isConnected: true
+              })
             } else {
               console.log('offline');
+
+              this.setState({
+                ...this.state,
+                isConnected: false
+              })
             }
           });
+
+        
+
+
+          // NetInfo.fetch().then(connection => {
+          //   if (connection.isConnected) {
+          //     console.log('online');
+          //   } else {
+          //     console.log('offline');
+          //   }
+          // });
+
+
 
           // create a reference to the active user's documents (messages)
           // this.referenceChatUser = firebase
