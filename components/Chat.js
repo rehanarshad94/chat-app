@@ -69,7 +69,7 @@ export default class Chat extends Component{
       try {
         messages = await AsyncStorage.getItem('messages') || [];
         this.setState({
-          messages: JSON.parse(messages)
+          messages: JSON.parse(messages),
         });
       } catch (error) {
         console.log(error.message);
@@ -140,6 +140,8 @@ export default class Chat extends Component{
               })
             }
           });
+
+         
 
         
 
@@ -265,10 +267,10 @@ export default class Chat extends Component{
         // () => {
         //   this.addMessage(messages);
         // }
-        () => {
+        
         this.addMessage(messages);
         this.saveMessages();
-        }
+        
 
       }
 
@@ -297,6 +299,13 @@ export default class Chat extends Component{
         }
       }
 
+      // renderInputToolbar(props) {
+      //   if (!this.state.isConnected) {
+      //   } else {
+      //     return <InputToolbar {...props} />;
+      //   }
+      // }
+
       
     
 
@@ -324,6 +333,7 @@ export default class Chat extends Component{
           user={{
             _id: 1,
           }}
+          InputToolbar={this.renderInputToolbar.bind(this)}
           />
 
          {/* <View>
